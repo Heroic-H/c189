@@ -17,7 +17,7 @@
             var score=0;
             var lives=3;
             var edges;
-            var left=false
+            var left=false,ready=false
 
             function preload() {
                 // This creates ElectroFast's in-game animations. It's pretty long!
@@ -175,21 +175,25 @@
                     dronesGroup.bounceOff(edges);
 
                     if(dronesGroup.isTouching(lightningGroup)){
-                    dronesGroup[0].destroy();
-                    score++;
+                        dronesGroup[0].destroy();
+                        score++;
                     }
 
                     if(dronesGroup.isTouching(bomb)){
-                    dronesGroup[0].destroy();
+                        dronesGroup[0].destroy();
                     }
 
                     if(dronesGroup.isTouching(Electrofast)){
-                    dronesGroup[0].destroy();
+                        dronesGroup[0].destroy();
                     }
                 }
 
             function lightningControl() {
-                if(keyDown("DOWN_ARROW")||keyDown("SPACE")) {
+                if(keyDown("DOWN_ARROW")||keyDown("SPACE")){
+                    ready=true
+                }
+                if(ready&&frameCount%4==0){
+                    ready=false
                     lightning=createSprite(Electrofast.x,Electrofast.y);
                     lightning.addImage(lightningImg);
                     if(left){
@@ -200,6 +204,7 @@
                     lightning.lifetime=50;
                     lightning.scale=0.5;
                     lightningGroup.add(lightning);
+                    lightningGroup.destroy(dronesGroup)
                 }
             }
         </script>
