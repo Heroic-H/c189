@@ -5,7 +5,6 @@
         <script src="p5.dom.min.js"></script>
         <script src="p5.sound.min.js"></script>
         <script src="./p5.play.js"></script>
-        <title>Electrofast The Videogame!</title>
     </head>
     <body>
         <script>
@@ -78,14 +77,34 @@
                 bomb.addImage(bombImg);
                 bomb.scale=0.5;
                 bomb.setCollider("circle",0,27,78)
+                bomb.debug=false
             }
-
+            
             function draw() { 
                 background("cyan");
 
                 if(gameOver==false){
                     drawSprites();
 
+                    if(dronesGroup.isTouching(lightningGroup)){
+                        for(i=0;i<dronesGroup.length;i++){
+                            if(dronesGroup[i].isTouching(lightningGroup)){
+                                dronesGroup[i].destroy()
+                            }
+                        }
+                        lightningGroup.destroyEach()
+                        score++;
+                    }
+
+                    if(dronesGroup.isTouching(bomb)||dronesGroup.isTouching(Electrofast)){
+                        for(i=0;i<dronesGroup.length;i++){
+                            if(dronesGroup[i].isTouching(bomb)||dronesGroup.isTouching(Electrofast)){
+                                dronesGroup[i].destroy()
+                            }
+                        }
+                        lives--
+                    }
+                    
                     // Displays the score and lives.
                     textSize(30);
                     stroke("blue");
@@ -93,11 +112,6 @@
                     text("Score: "+score,1250,30);
                     stroke("green");
                     text("Lives: "+lives,10,30);
-
-                    // Subtracts lives where necessary.
-                    if(bomb.isTouching(lightningGroup)||bomb.isTouching(dronesGroup)||Electrofast.isTouching(dronesGroup)) {
-                        lives--;
-                    }
 
                     // These functions control some of the game's fundementals,such as controls,the drones and the lightning bolts.
                     controlsAndPhysics();
@@ -165,7 +179,8 @@
                     drones.scale=0.17;
                     drones.velocityX=-7;
                     drones.velocityY=+7;
-                    //drones.setCollider("rectangle",0,0,400,300)
+                    drones.debug=false
+                    drones.setCollider("rectangle",0,0,400,300)
                     dronesGroup.add(drones);
                     } 
 
@@ -174,19 +189,6 @@
                     dronesGroup.bounceOff(ground);
                     dronesGroup.bounceOff(middlePlatform);
                     dronesGroup.bounceOff(edges);
-
-                    if(dronesGroup.isTouching(lightningGroup)){
-                        dronesGroup[0].destroy();
-                        score++;
-                    }
-
-                    if(dronesGroup.isTouching(bomb)){
-                        dronesGroup[0].destroy();
-                    }
-
-                    if(dronesGroup.isTouching(Electrofast)){
-                        dronesGroup[0].destroy();
-                    }
                 }
 
             function lightningControl() {
@@ -204,8 +206,8 @@
                     }
                     lightning.lifetime=50;
                     lightning.scale=0.5;
+                    lightning.debug=false
                     lightningGroup.add(lightning);
-                    lightningGroup.destroy(dronesGroup)
                 }
             }
         </script>
